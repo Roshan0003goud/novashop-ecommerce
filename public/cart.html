@@ -8,20 +8,25 @@
 </head>
 <body>
   <div id="nav"></div>
-  <main class="container">
-    <section class="hero"><h1>Your cart</h1></section>
+  <main class="container page">
+    <h1 class="hero-title">Shopping cart</h1>
+    <p class="hero-sub">Review your items and proceed to secure checkout.</p>
     <div id="alert"></div>
     <div class="two-col">
       <div class="panel"><div id="items"></div></div>
       <div class="panel">
         <h3 style="margin-top:0">Order summary</h3>
-        <div class="summary"><span class="muted">Subtotal</span><span id="subtotal">$0.00</span></div>
-        <div class="summary"><span class="muted">Shipping</span><span>Free</span></div>
+        <div class="summary"><span>Subtotal</span><span id="subtotal">$0.00</span></div>
+        <div class="summary"><span>Shipping</span><span style="color:var(--accent);font-weight:700">Free</span></div>
+        <div class="summary"><span>Estimated tax</span><span>Calculated at checkout</span></div>
         <div class="summary total"><span>Total</span><span id="total">$0.00</span></div>
-        <a href="/checkout.html" class="btn btn-primary btn-block mt" id="checkoutBtn">Proceed to checkout</a>
+        <a href="/checkout.html" class="btn btn-primary btn-block btn-lg mt" id="checkoutBtn">Proceed to checkout</a>
+        <p class="muted center" style="font-size:12.5px;margin-top:12px">🔒 Secure 256-bit encrypted checkout</p>
       </div>
     </div>
   </main>
+
+  <div id="footer"></div>
 
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>

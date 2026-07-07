@@ -6,14 +6,14 @@
   var socket = null;
   var typingTimer = null;
 
-  var $fab = $('<button class="chat-fab" title="Chat with support">💬</button>');
+  var $fab = $('<button class="chat-fab" title="Chat with support">💬 <span>Support</span></button>');
   var $box = $(
     '<div class="chat-box">' +
-      '<div class="chat-head"><span>Support chat</span><span style="cursor:pointer" id="chatClose">✕</span></div>' +
+      '<div class="chat-head"><span>Support chat<small>Typically replies instantly</small></span><span style="cursor:pointer;font-size:18px" id="chatClose">✕</span></div>' +
       '<div class="chat-msgs" id="chatMsgs"></div>' +
       '<div class="typing" id="chatTyping"></div>' +
       '<div class="chat-input">' +
-        '<input class="input" id="chatText" placeholder="Type a message…" autocomplete="off"/>' +
+        '<input id="chatText" placeholder="Type a message…" autocomplete="off"/>' +
         '<button class="btn btn-primary" id="chatSend">Send</button>' +
       '</div>' +
     '</div>'

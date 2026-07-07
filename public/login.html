@@ -10,6 +10,9 @@
   <div id="nav"></div>
   <main class="container">
     <div class="auth-wrap">
+      <div class="brand-center">
+        <div class="logo" style="justify-content:center"><span class="logo-mark">N</span> Nova<span class="logo-accent">Shop</span></div>
+      </div>
       <div class="panel">
         <h2 class="form-title">Welcome back</h2>
         <p class="form-sub">Log in to your NovaShop account.</p>
@@ -23,13 +26,15 @@
             <label>Password</label>
             <input class="input" type="password" id="password" required placeholder="••••••••" />
           </div>
-          <button class="btn btn-primary btn-block" type="submit">Log in</button>
+          <button class="btn btn-primary btn-block btn-lg" type="submit">Log in</button>
         </form>
-        <p class="center muted mt" style="font-size:14px">No account? <a href="/register.html">Sign up</a></p>
-        <p class="center muted" style="font-size:12px">Demo: customer@shop.dev / Password123!</p>
+        <p class="center muted mt" style="font-size:14px">No account? <a href="/register.html" style="color:var(--brand);font-weight:700">Sign up</a></p>
+        <p class="center muted" style="font-size:12.5px;background:var(--bg-soft);border:1px dashed var(--border-strong);border-radius:10px;padding:10px;margin-top:14px">Demo customer: <b>customer@shop.dev</b> / <b>Password123!</b></p>
       </div>
     </div>
   </main>
+
+  <div id="footer"></div>
 
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="/js/common.js"></script>

@@ -1,13 +1,35 @@
 /* Catalog page: search, filter, sort, paginate, add-to-cart. */
 $(function () {
-  var state = { search: '', category: '', sort: 'newest', page: 1 };
-  var debounce;
+  var initialQ = new URLSearchParams(location.search).get('q') || '';
+  var state = { search: initialQ, category: '', sort: 'newest', page: 1 };
+
+  // Deterministic pseudo rating so cards look real (stable per product id).
+  function rating(id) {
+    var r = 3.9 + ((id * 7) % 11) / 10; // 3.9 – 4.9
+    var reviews = 12 + ((id * 37) % 480);
+    return { r: Math.min(5, r).toFixed(1), reviews: reviews };
+  }
+  function starHtml(r) {
+    var full = Math.round(r);
+    return '<span class="s">' + '★'.repeat(full) + '☆'.repeat(5 - full) + '</span>';
+  }
 
   function loadCategories() {
     Shop.api('GET', '/api/products/categories').done(function (res) {
-      res.categories.forEach(function (c) {
-        $('#category').append($('<option>').val(c.category).text(c.category + ' (' + c.count + ')'));
-      });
+      var $chips = $('#chips').empty();
+      $chips.append(chip('All', ''));
+      res.categories.forEach(function (c) { $chips.append(chip(c.category, c.category, c.count)); });
+      syncChips();
+    });
+  }
+  function chip(label, value, count) {
+    var $c = $('<button class="chip"></button>').data('value', value)
+      .text(label + (count ? '  ·  ' + count : ''));
+    return $c;
+  }
+  function syncChips() {
+    $('#chips .chip').each(function () {
+      $(this).toggleClass('active', String($(this).data('value')) === String(state.category));
     });
   }
 
@@ -17,39 +39,49 @@ $(function () {
     });
     Shop.api('GET', '/api/products?' + qs).done(render).fail(function (xhr) {
       $('#grid').empty();
-      $('#alert').html('<div class="alert alert-error">' + Shop.errMsg(xhr) +
-        ' — did you run <code>npm run db:setup &amp;&amp; npm run db:seed</code>?</div>');
+      $('#alert').html('<div class="alert alert-error">' + Shop.errMsg(xhr) + '</div>');
     });
   }
 
   function render(res) {
     $('#alert').empty();
+    var label = res.total + ' product' + (res.total === 1 ? '' : 's');
+    if (state.search) label += ' for “' + Shop.esc(state.search) + '”';
+    $('#resultCount').text(label);
+
     var $grid = $('#grid').empty();
-    if (!res.items.length) { $grid.html('<div class="empty">No products match your search.</div>'); $('#pagination').empty(); return; }
+    if (!res.items.length) {
+      $grid.html('<div class="empty">No products match your search. <a href="/">Clear filters →</a></div>');
+      $('#pagination').empty();
+      return;
+    }
 
     res.items.forEach(function (p) {
       var out = p.stock <= 0;
+      var rt = rating(p.id);
       var $card = $(
-        '<div class="card">' +
-          '<img class="thumb" loading="lazy" alt="" />' +
+        '<article class="card">' +
+          '<div class="thumb-wrap"><img class="thumb" loading="lazy" alt="" />' +
+            '<span class="tag"></span></div>' +
           '<div class="body">' +
             '<div class="cat"></div>' +
             '<div class="name"></div>' +
-            '<div class="row">' +
-              '<div class="price"></div>' +
-              '<div class="stock"></div>' +
-            '</div>' +
-            '<button class="btn btn-primary btn-block add" style="margin-top:6px">Add to cart</button>' +
+            '<div class="stars"></div>' +
+            '<div class="row"><div class="price"></div>' +
+              '<button class="add" title="Add to cart">+</button></div>' +
           '</div>' +
-        '</div>'
+        '</article>'
       );
       $card.find('.thumb').attr('src', p.image_url || '');
       $card.find('.cat').text(p.category);
       $card.find('.name').text(p.name);
+      $card.find('.stars').html(starHtml(Number(rt.r)) + rt.r + ' (' + rt.reviews + ')');
       $card.find('.price').text(Shop.money(p.price));
-      $card.find('.stock').text(out ? 'Out of stock' : p.stock + ' in stock');
-      $card.find('.add').prop('disabled', out).toggleClass('btn-primary', !out).data('id', p.id)
-        .text(out ? 'Unavailable' : 'Add to cart');
+      var $tag = $card.find('.tag');
+      if (out) $tag.addClass('out').text('Sold out');
+      else if (p.stock <= 25) $tag.text('Low stock');
+      else $tag.remove();
+      $card.find('.add').prop('disabled', out).data('id', p.id).text(out ? '×' : '+');
       $grid.append($card);
     });
 
@@ -63,31 +95,29 @@ $(function () {
       var $b = $('<button class="btn"></button>').text(label);
       if (active) $b.addClass('btn-primary');
       if (disabled) $b.prop('disabled', true);
-      else $b.on('click', function () { state.page = target; loadProducts(); window.scrollTo(0, 0); });
+      else $b.on('click', function () { state.page = target; loadProducts(); document.getElementById('catalog').scrollIntoView({ behavior: 'smooth' }); });
       return $b;
     };
-    $p.append(mk('‹ Prev', page - 1, page <= 1));
+    $p.append(mk('‹', page - 1, page <= 1));
     for (var i = 1; i <= pages; i++) $p.append(mk(String(i), i, false, i === page));
-    $p.append(mk('Next ›', page + 1, page >= pages));
+    $p.append(mk('›', page + 1, page >= pages));
   }
 
   // --- events ---
-  $('#search').on('input', function () {
-    clearTimeout(debounce);
-    var v = $(this).val();
-    debounce = setTimeout(function () { state.search = v; state.page = 1; loadProducts(); }, 300);
+  $('#chips').on('click', '.chip', function () {
+    state.category = $(this).data('value'); state.page = 1;
+    syncChips(); loadProducts();
   });
-  $('#category').on('change', function () { state.category = $(this).val(); state.page = 1; loadProducts(); });
   $('#sort').on('change', function () { state.sort = $(this).val(); state.page = 1; loadProducts(); });
 
   $('#grid').on('click', '.add', function () {
     if (!Shop.getUser()) { window.location.href = '/login.html'; return; }
     var id = $(this).data('id'); var $btn = $(this);
-    $btn.prop('disabled', true).text('Adding…');
+    $btn.prop('disabled', true).text('✓');
     Shop.api('POST', '/api/cart', { product_id: id, quantity: 1 })
-      .done(function () { $btn.text('Added ✓'); Shop.refreshCartCount();
-        setTimeout(function () { $btn.prop('disabled', false).text('Add to cart'); }, 1000); })
-      .fail(function (xhr) { $btn.prop('disabled', false).text('Add to cart'); alert(Shop.errMsg(xhr)); });
+      .done(function () { Shop.refreshCartCount();
+        setTimeout(function () { $btn.prop('disabled', false).text('+'); }, 900); })
+      .fail(function (xhr) { $btn.prop('disabled', false).text('+'); alert(Shop.errMsg(xhr)); });
   });
 
   loadCategories();

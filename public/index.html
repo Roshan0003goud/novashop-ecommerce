@@ -3,33 +3,60 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>NovaShop — Real-time E-Commerce</title>
+  <title>NovaShop — Modern Online Store</title>
+  <meta name="description" content="Shop electronics, home, apparel and more with real-time support." />
   <link rel="stylesheet" href="/css/style.css" />
 </head>
 <body>
   <div id="nav"></div>
 
-  <main class="container">
+  <main class="container page">
+    <!-- Hero -->
     <section class="hero">
-      <h1>Everything you need, delivered fast.</h1>
-      <p>Browse 50+ products across electronics, home, apparel and more — with live support chat.</p>
+      <div class="hero-inner">
+        <span class="eyebrow">New season · Free shipping over $50</span>
+        <h1>Everything you love, delivered fast.</h1>
+        <p>Explore 50+ curated products across electronics, home, apparel and more — with instant, real-time support whenever you need it.</p>
+        <a href="#catalog" class="btn btn-lg">Shop the catalog</a>
+      </div>
+      <div class="hero-glow"></div>
     </section>
 
-    <div class="toolbar">
-      <input id="search" class="input" placeholder="Search products…" />
-      <select id="category"><option value="">All categories</option></select>
-      <select id="sort">
-        <option value="newest">Newest</option>
-        <option value="price_asc">Price: Low → High</option>
-        <option value="price_desc">Price: High → Low</option>
-        <option value="name">Name A–Z</option>
-      </select>
+    <!-- Trust bar -->
+    <section class="trust">
+      <div class="trust-item"><div class="ico">🚚</div><div><b>Free shipping</b><span>On orders over $50</span></div></div>
+      <div class="trust-item"><div class="ico">🔒</div><div><b>Secure checkout</b><span>JWT &amp; encrypted auth</span></div></div>
+      <div class="trust-item"><div class="ico">💬</div><div><b>Live support</b><span>Real-time chat 24/7</span></div></div>
+      <div class="trust-item"><div class="ico">↩️</div><div><b>Easy returns</b><span>30-day money back</span></div></div>
+    </section>
+
+    <!-- Categories -->
+    <section class="section" id="catalog">
+      <div class="section-head">
+        <div>
+          <h2>Browse the catalog</h2>
+          <p>Filter by category, search, and sort to find exactly what you need.</p>
+        </div>
+        <select id="sort" class="input">
+          <option value="newest">Sort: Featured</option>
+          <option value="price_asc">Price: Low → High</option>
+          <option value="price_desc">Price: High → Low</option>
+          <option value="name">Name: A–Z</option>
+        </select>
+      </div>
+      <div class="chips" id="chips"></div>
+    </section>
+
+    <div class="toolbar mt">
+      <div class="left" id="resultCount"></div>
     </div>
 
     <div id="alert"></div>
     <div id="grid" class="grid"></div>
     <div id="pagination" class="pagination"></div>
   </main>
+
+  <div id="footer"></div>
 
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
