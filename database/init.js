@@ -35,6 +35,14 @@ async function ensureReady() {
       await conn.query(stmt);
     }
 
+    // Ensure image_url can hold long data-URI image tiles (older schemas used
+    // VARCHAR(255)). Safe/idempotent to run on every boot.
+    try {
+      await conn.query('ALTER TABLE products MODIFY image_url TEXT NULL');
+    } catch (err) {
+      console.error('image_url widen skipped:', err.message);
+    }
+
     const [rows] = await conn.query('SELECT COUNT(*) AS n FROM products');
     if (rows[0].n > 0) {
       // One-time image migration: refresh any legacy/mismatched image URLs

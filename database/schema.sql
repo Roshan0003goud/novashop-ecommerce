@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS products (
   category    VARCHAR(80) NOT NULL,
   price       DECIMAL(10,2) NOT NULL,
   stock       INT NOT NULL DEFAULT 0,
-  image_url   VARCHAR(255) NULL,
+  image_url   TEXT NULL,
   created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
   KEY idx_products_category (category),
