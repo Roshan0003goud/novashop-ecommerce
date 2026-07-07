@@ -37,7 +37,19 @@ async function ensureReady() {
 
     const [rows] = await conn.query('SELECT COUNT(*) AS n FROM products');
     if (rows[0].n > 0) {
-      return { created: false, products: rows[0].n };
+      // One-time image migration: refresh any legacy/mismatched image URLs
+      // (e.g. old random stock photos) with on-brand product tiles.
+      const [stale] = await conn.query(
+        "SELECT id, name, category FROM products WHERE image_url IS NULL OR image_url NOT LIKE 'data:image/svg%'"
+      );
+      for (const p of stale) {
+        await conn.query('UPDATE products SET image_url = ? WHERE id = ?', [
+          imageUrl(p.name, p.category),
+          p.id,
+        ]);
+      }
+      if (stale.length) console.log(`✓ Refreshed ${stale.length} product images`);
+      return { created: false, products: rows[0].n, imagesFixed: stale.length };
     }
 
     // Empty catalog -> seed demo users + products.
@@ -60,7 +72,7 @@ async function ensureReady() {
       const stock = 20 + ((i * 7) % 80);
       await conn.query(
         'INSERT INTO products (name, description, category, price, stock, image_url) VALUES (?,?,?,?,?,?)',
-        [name, description(name, category), category, price, stock, imageUrl(i + 1)]
+        [name, description(name, category), category, price, stock, imageUrl(name, category)]
       );
     }
 

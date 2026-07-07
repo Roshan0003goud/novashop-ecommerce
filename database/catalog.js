@@ -69,8 +69,88 @@ function description(name, category) {
   return `${name} — a top-rated ${category.toLowerCase()} pick. Quality materials, backed by a 30-day return policy and fast shipping.`;
 }
 
-function imageUrl(seed) {
-  return `https://picsum.photos/seed/prod${seed}/400/300`;
+// Per-category color pair + icon, so each product image is on-brand and its
+// category is instantly recognizable.
+const CATEGORY_STYLE = {
+  'Electronics': ['#4f46e5', '#7c3aed', '🎧'],
+  'Home & Kitchen': ['#0ea5e9', '#0e7490', '🍳'],
+  'Apparel': ['#ec4899', '#be185d', '👕'],
+  'Books': ['#f59e0b', '#b45309', '📚'],
+  'Sports & Outdoors': ['#10b981', '#047857', '🏕️'],
+  'Beauty & Health': ['#a855f7', '#7c3aed', '🧴'],
+  'Toys & Games': ['#f97316', '#c2410c', '🧸'],
+};
+
+// A few product-specific icons for extra polish (falls back to category icon).
+const PRODUCT_ICON = {
+  keyboard: '⌨️', mouse: '🖱️', monitor: '🖥️', webcam: '📷', camera: '📷',
+  speaker: '🔊', earbud: '🎧', headphone: '🎧', watch: '⌚', ssd: '💾',
+  charger: '🔌', hub: '🏠', kettle: '🫖', press: '☕', vacuum: '🧹',
+  cookware: '🍳', skillet: '🍳', pillow: '🛏️', dinnerware: '🍽️', lamp: '💡',
+  purifier: '🌬️', 'cutting board': '🔪', 't-shirt': '👕', jeans: '👖',
+  jacket: '🧥', sweater: '🧶', shorts: '🩳', belt: '📏', beanie: '🧢',
+  sneaker: '👟', yoga: '🧘', dumbbell: '🏋️', bottle: '🥤', tent: '⛺',
+  band: '💪', backpack: '🎒', roller: '🧴', serum: '🧪', toothbrush: '🪥',
+  dryer: '💨', sunscreen: '🧴', brush: '🧽', blocks: '🧱', 'board game': '🎲',
+  puzzle: '🧩', car: '🚗', robot: '🤖', book: '📖',
+};
+
+function xmlEscape(s) {
+  return String(s).replace(/[&<>"']/g, (c) => (
+    { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
+  ));
+}
+
+function pickIcon(name, fallback) {
+  const lower = name.toLowerCase();
+  for (const key of Object.keys(PRODUCT_ICON)) {
+    if (lower.includes(key)) return PRODUCT_ICON[key];
+  }
+  return fallback;
+}
+
+function wrapName(name, maxChars = 16, maxLines = 3) {
+  const words = name.split(/\s+/);
+  const lines = [];
+  let cur = '';
+  for (const w of words) {
+    if ((cur + ' ' + w).trim().length > maxChars && cur) {
+      lines.push(cur);
+      cur = w;
+    } else {
+      cur = (cur + ' ' + w).trim();
+    }
+  }
+  if (cur) lines.push(cur);
+  return lines.slice(0, maxLines);
+}
+
+/**
+ * Build a clean SVG "product tile" as a data URI. The image always shows the
+ * product's own name + category icon, so images never look mismatched, load
+ * instantly, and need no external image host.
+ */
+function imageUrl(name, category) {
+  const [c1, c2, catIcon] = CATEGORY_STYLE[category] || ['#4f46e5', '#7c3aed', '🛍️'];
+  const icon = pickIcon(name, catIcon);
+  const lines = wrapName(name);
+  const startY = 452 - (lines.length - 1) * 21;
+  const nameSvg = lines
+    .map((ln, i) => `<tspan x="300" dy="${i === 0 ? 0 : 42}">${xmlEscape(ln)}</tspan>`)
+    .join('');
+
+  const svg =
+    `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600">` +
+    `<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">` +
+    `<stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient></defs>` +
+    `<rect width="600" height="600" fill="url(#g)"/>` +
+    `<circle cx="300" cy="225" r="130" fill="#ffffff" opacity="0.14"/>` +
+    `<text x="300" y="258" font-size="140" text-anchor="middle">${icon}</text>` +
+    `<text x="300" y="${startY}" font-size="34" font-family="Arial, Helvetica, sans-serif" font-weight="700" fill="#ffffff" text-anchor="middle">${nameSvg}</text>` +
+    `<text x="300" y="556" font-size="20" font-family="Arial, Helvetica, sans-serif" fill="#ffffff" opacity="0.8" text-anchor="middle" letter-spacing="2">${xmlEscape(category.toUpperCase())}</text>` +
+    `</svg>`;
+
+  return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
 }
 
 module.exports = { catalog, description, imageUrl };

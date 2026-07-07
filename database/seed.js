@@ -42,7 +42,7 @@ async function seed() {
       const stock = 20 + ((i * 7) % 80); // deterministic 20-99
       await conn.query(
         'INSERT INTO products (name, description, category, price, stock, image_url) VALUES (?,?,?,?,?,?)',
-        [name, description(name, category), category, price, stock, imageUrl(i + 1)]
+        [name, description(name, category), category, price, stock, imageUrl(name, category)]
       );
       inserted++;
     }
