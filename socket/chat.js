@@ -2,6 +2,10 @@
 
 const { verifyToken } = require('../middleware/auth');
 const { query } = require('../config/db');
+const { generateReply, ASSISTANT_NAME } = require('../services/assistant');
+
+// Rooms where a human admin has taken over — the AI assistant stays quiet there.
+const humanRooms = new Set();
 
 /**
  * Real-time support chat between customers and admins.
@@ -83,6 +87,14 @@ function initChat(io) {
       // Deliver to everyone in the room + all admins (so the admin inbox updates).
       io.to(targetRoom).emit('chat_message', message);
       io.to('admins').emit('chat_message', message);
+
+      if (role === 'admin') {
+        // A human has joined this conversation — the AI assistant steps aside.
+        humanRooms.add(targetRoom);
+      } else if (!humanRooms.has(targetRoom)) {
+        // Customer message with no human handling it → AI assistant replies.
+        replyWithAssistant(io, targetRoom, text, name);
+      }
     });
 
     socket.on('typing', ({ room }) => {
@@ -96,6 +108,42 @@ function initChat(io) {
       }
     });
   });
+}
+
+/**
+ * Generate an assistant reply for a customer message and broadcast it to the
+ * room (and the admin inbox). Shows a brief "typing…" indicator first so it
+ * feels like a real agent.
+ */
+async function replyWithAssistant(io, room, userText, userName) {
+  io.to(room).emit('typing', { name: ASSISTANT_NAME, role: 'admin' });
+  try {
+    const { text } = await generateReply(userText, { userName });
+    if (!text) return;
+
+    const message = {
+      room,
+      sender_id: null,
+      sender_name: ASSISTANT_NAME,
+      sender_role: 'admin',
+      body: text,
+      created_at: new Date().toISOString(),
+    };
+
+    try {
+      await query(
+        'INSERT INTO chat_messages (room, sender_id, sender_name, sender_role, body) VALUES (?,?,?,?,?)',
+        [room, null, ASSISTANT_NAME, 'admin', text]
+      );
+    } catch (err) {
+      console.error('persist assistant reply error:', err.message);
+    }
+
+    io.to(room).emit('chat_message', message);
+    io.to('admins').emit('chat_message', message);
+  } catch (err) {
+    console.error('assistant reply failed:', err.message);
+  }
 }
 
 async function loadHistory(room, limit = 50) {
