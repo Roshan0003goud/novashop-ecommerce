@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NovaShop — Real-time E-Commerce</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <div id="nav"></div>
+
+  <main class="container">
+    <section class="hero">
+      <h1>Everything you need, delivered fast.</h1>
+      <p>Browse 50+ products across electronics, home, apparel and more — with live support chat.</p>
+    </section>
+
+    <div class="toolbar">
+      <input id="search" class="input" placeholder="Search products…" />
+      <select id="category"><option value="">All categories</option></select>
+      <select id="sort">
+        <option value="newest">Newest</option>
+        <option value="price_asc">Price: Low → High</option>
+        <option value="price_desc">Price: High → Low</option>
+        <option value="name">Name A–Z</option>
+      </select>
+    </div>
+
+    <div id="alert"></div>
+    <div id="grid" class="grid"></div>
+    <div id="pagination" class="pagination"></div>
+  </main>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/common.js"></script>
+  <script src="/js/app.js"></script>
+  <script src="/js/chat.js"></script>
+</body>
+</html>

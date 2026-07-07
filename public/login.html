@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login — NovaShop</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <div id="nav"></div>
+  <main class="container">
+    <div class="auth-wrap">
+      <div class="panel">
+        <h2 class="form-title">Welcome back</h2>
+        <p class="form-sub">Log in to your NovaShop account.</p>
+        <div id="alert"></div>
+        <form id="loginForm">
+          <div class="field">
+            <label>Email</label>
+            <input class="input" type="email" id="email" required placeholder="you@example.com" />
+          </div>
+          <div class="field">
+            <label>Password</label>
+            <input class="input" type="password" id="password" required placeholder="••••••••" />
+          </div>
+          <button class="btn btn-primary btn-block" type="submit">Log in</button>
+        </form>
+        <p class="center muted mt" style="font-size:14px">No account? <a href="/register.html">Sign up</a></p>
+        <p class="center muted" style="font-size:12px">Demo: customer@shop.dev / Password123!</p>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="/js/common.js"></script>
+  <script>
+    $('#loginForm').on('submit', function (e) {
+      e.preventDefault();
+      $('#alert').empty();
+      Shop.api('POST', '/api/auth/login', {
+        email: $('#email').val(), password: $('#password').val(),
+      }).done(function (res) {
+        Shop.setToken(res.token); Shop.setUser(res.user);
+        window.location.href = res.user.role === 'admin' ? '/admin.html' : '/';
+      }).fail(function (xhr) {
+        $('#alert').html('<div class="alert alert-error">' + Shop.errMsg(xhr) + '</div>');
+      });
+    });
+  </script>
+</body>
+</html>

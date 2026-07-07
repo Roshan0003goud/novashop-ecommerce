@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Your Orders — NovaShop</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <div id="nav"></div>
+  <main class="container">
+    <section class="hero"><h1>Your orders</h1></section>
+    <div id="alert"></div>
+    <div id="orders"></div>
+  </main>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/common.js"></script>
+  <script src="/js/chat.js"></script>
+  <script>
+    $(function () {
+      if (!Shop.requireAuth()) return;
+      var params = new URLSearchParams(location.search);
+      if (params.get('success')) {
+        $('#alert').html('<div class="alert alert-success">🎉 Order #' +
+          $('<i>').text(params.get('success')).html() + ' placed successfully!</div>');
+      }
+      Shop.api('GET', '/api/orders').done(function (res) {
+        var $o = $('#orders');
+        if (!res.orders.length) { $o.html('<div class="empty">No orders yet. <a href="/">Shop now →</a></div>'); return; }
+        res.orders.forEach(function (o) {
+          var $card = $('<div class="panel" style="margin-bottom:14px"></div>');
+          var date = new Date(o.created_at).toLocaleString();
+          $card.append($('<div class="summary"></div>')
+            .append($('<strong></strong>').text('Order #' + o.id))
+            .append($('<span class="price"></span>').text(Shop.money(o.total))));
+          $card.append($('<div class="muted" style="font-size:13px"></div>')
+            .text(date + ' · ' + o.status + ' · ships to ' + o.shipping_name));
+          $o.append($card);
+        });
+      }).fail(function (xhr) {
+        $('#alert').html('<div class="alert alert-error">' + Shop.errMsg(xhr) + '</div>');
+      });
+    });
+  </script>
+</body>
+</html>

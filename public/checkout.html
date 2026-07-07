@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Checkout — NovaShop</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <div id="nav"></div>
+  <main class="container">
+    <section class="hero"><h1>Checkout</h1></section>
+    <div id="alert"></div>
+    <div class="two-col">
+      <div class="panel">
+        <h3 style="margin-top:0">Shipping details</h3>
+        <form id="checkoutForm">
+          <div class="field"><label>Full name</label><input class="input" id="name" required /></div>
+          <div class="field"><label>Shipping address</label><input class="input" id="addr" required placeholder="123 Main St, Arlington, TX" /></div>
+          <div class="field"><label>Card number (demo — not charged)</label><input class="input" id="card" placeholder="4242 4242 4242 4242" /></div>
+          <button class="btn btn-primary btn-block" type="submit" id="payBtn">Pay & place order</button>
+        </form>
+      </div>
+      <div class="panel">
+        <h3 style="margin-top:0">Order summary</h3>
+        <div id="summaryItems"></div>
+        <div class="summary total"><span>Total</span><span id="total">$0.00</span></div>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="/js/common.js"></script>
+  <script src="/js/checkout.js"></script>
+</body>
+</html>

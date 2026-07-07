@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin — NovaShop</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <div id="nav"></div>
+  <main class="container">
+    <section class="hero"><h1>Admin dashboard</h1><p>Live customer support inbox & catalog management.</p></section>
+    <div id="alert"></div>
+
+    <div class="panel">
+      <h3 style="margin-top:0">Support inbox (real-time)</h3>
+      <div class="admin-grid">
+        <div>
+          <div class="muted" style="font-size:13px;margin-bottom:8px">Conversations</div>
+          <div class="room-list" id="roomList"><div class="muted" style="font-size:13px">Waiting for customers…</div></div>
+        </div>
+        <div class="admin-chat">
+          <div class="chat-head"><span id="activeRoomLabel">Select a conversation</span></div>
+          <div class="chat-msgs" id="chatMsgs"><div class="empty">Pick a customer on the left to start chatting.</div></div>
+          <div class="typing" id="chatTyping"></div>
+          <div class="chat-input">
+            <input class="input" id="chatText" placeholder="Reply to customer…" disabled autocomplete="off" />
+            <button class="btn btn-primary" id="chatSend" disabled>Send</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel mt">
+      <h3 style="margin-top:0">Add product</h3>
+      <form id="productForm" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="field"><label>Name</label><input class="input" id="pname" required style="width:100%" /></div>
+        <div class="field"><label>Category</label><input class="input" id="pcat" required style="width:100%" /></div>
+        <div class="field"><label>Price</label><input class="input" id="pprice" type="number" step="0.01" required style="width:100%" /></div>
+        <div class="field"><label>Stock</label><input class="input" id="pstock" type="number" value="25" style="width:100%" /></div>
+        <div class="field" style="grid-column:1/3"><label>Image URL</label><input class="input" id="pimg" style="width:100%" placeholder="https://…" /></div>
+        <div class="field" style="grid-column:1/3"><label>Description</label><input class="input" id="pdesc" style="width:100%" /></div>
+        <button class="btn btn-primary" type="submit" style="grid-column:1/3">Add product</button>
+      </form>
+    </div>
+  </main>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/common.js"></script>
+  <script src="/js/admin.js"></script>
+</body>
+</html>

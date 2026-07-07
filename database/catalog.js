@@ -1,0 +1,76 @@
+'use strict';
+
+// Shared product catalog (50+ items) used by both the seed script and
+// the auto-initializer that runs on first boot in cloud deployments.
+const catalog = [
+  // Electronics
+  ['Wireless Noise-Cancelling Headphones', 'Electronics', 199.99],
+  ['Bluetooth Portable Speaker', 'Electronics', 59.99],
+  ['4K Action Camera', 'Electronics', 149.99],
+  ['Mechanical Gaming Keyboard', 'Electronics', 89.99],
+  ['Ergonomic Wireless Mouse', 'Electronics', 34.99],
+  ['27" QHD Monitor', 'Electronics', 279.99],
+  ['USB-C Fast Charger 65W', 'Electronics', 24.99],
+  ['Smartwatch Fitness Tracker', 'Electronics', 129.99],
+  ['1080p Webcam with Ring Light', 'Electronics', 45.99],
+  ['Portable SSD 1TB', 'Electronics', 109.99],
+  ['Wireless Earbuds Pro', 'Electronics', 79.99],
+  ['Smart Home Hub', 'Electronics', 64.99],
+  // Home & Kitchen
+  ['Stainless Steel French Press', 'Home & Kitchen', 29.99],
+  ['Non-Stick Cookware Set (10pc)', 'Home & Kitchen', 119.99],
+  ['Robot Vacuum Cleaner', 'Home & Kitchen', 219.99],
+  ['Electric Kettle 1.7L', 'Home & Kitchen', 39.99],
+  ['Memory Foam Pillow (2-pack)', 'Home & Kitchen', 44.99],
+  ['Ceramic Dinnerware Set', 'Home & Kitchen', 74.99],
+  ['LED Desk Lamp with USB', 'Home & Kitchen', 27.99],
+  ['Air Purifier HEPA', 'Home & Kitchen', 139.99],
+  ['Cast Iron Skillet 12"', 'Home & Kitchen', 34.99],
+  ['Bamboo Cutting Board Set', 'Home & Kitchen', 22.99],
+  // Apparel
+  ['Classic Cotton T-Shirt', 'Apparel', 18.99],
+  ['Slim-Fit Denim Jeans', 'Apparel', 49.99],
+  ['Waterproof Rain Jacket', 'Apparel', 79.99],
+  ['Merino Wool Sweater', 'Apparel', 89.99],
+  ['Athletic Running Shorts', 'Apparel', 24.99],
+  ['Leather Belt', 'Apparel', 32.99],
+  ['Wool Blend Beanie', 'Apparel', 16.99],
+  ['Canvas Sneakers', 'Apparel', 54.99],
+  // Books
+  ['The Pragmatic Programmer', 'Books', 39.99],
+  ['Clean Code', 'Books', 34.99],
+  ['Designing Data-Intensive Applications', 'Books', 44.99],
+  ['Atomic Habits', 'Books', 19.99],
+  ['Sapiens: A Brief History', 'Books', 21.99],
+  ['The Midnight Library', 'Books', 14.99],
+  // Sports & Outdoors
+  ['Yoga Mat Non-Slip', 'Sports & Outdoors', 25.99],
+  ['Adjustable Dumbbell Set', 'Sports & Outdoors', 149.99],
+  ['Insulated Water Bottle 32oz', 'Sports & Outdoors', 19.99],
+  ['Camping Tent 4-Person', 'Sports & Outdoors', 129.99],
+  ['Resistance Bands Set', 'Sports & Outdoors', 21.99],
+  ['Trail Running Backpack', 'Sports & Outdoors', 64.99],
+  ['Foam Roller', 'Sports & Outdoors', 27.99],
+  // Beauty & Health
+  ['Vitamin C Serum', 'Beauty & Health', 23.99],
+  ['Electric Toothbrush', 'Beauty & Health', 49.99],
+  ['Hair Dryer Ionic', 'Beauty & Health', 59.99],
+  ['Sunscreen SPF 50', 'Beauty & Health', 14.99],
+  ['Facial Cleansing Brush', 'Beauty & Health', 34.99],
+  // Toys & Games
+  ['Wooden Building Blocks (100pc)', 'Toys & Games', 29.99],
+  ['Strategy Board Game', 'Toys & Games', 39.99],
+  ['1000-Piece Jigsaw Puzzle', 'Toys & Games', 17.99],
+  ['Remote Control Car', 'Toys & Games', 44.99],
+  ['STEM Robotics Kit', 'Toys & Games', 69.99],
+];
+
+function description(name, category) {
+  return `${name} — a top-rated ${category.toLowerCase()} pick. Quality materials, backed by a 30-day return policy and fast shipping.`;
+}
+
+function imageUrl(seed) {
+  return `https://picsum.photos/seed/prod${seed}/400/300`;
+}
+
+module.exports = { catalog, description, imageUrl };

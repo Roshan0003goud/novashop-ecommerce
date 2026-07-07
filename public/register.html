@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sign up — NovaShop</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <div id="nav"></div>
+  <main class="container">
+    <div class="auth-wrap">
+      <div class="panel">
+        <h2 class="form-title">Create your account</h2>
+        <p class="form-sub">Join NovaShop in a few seconds.</p>
+        <div id="alert"></div>
+        <form id="regForm">
+          <div class="field">
+            <label>Full name</label>
+            <input class="input" type="text" id="name" required placeholder="Jane Doe" />
+          </div>
+          <div class="field">
+            <label>Email</label>
+            <input class="input" type="email" id="email" required placeholder="you@example.com" />
+          </div>
+          <div class="field">
+            <label>Password</label>
+            <input class="input" type="password" id="password" required minlength="8" placeholder="At least 8 characters" />
+          </div>
+          <button class="btn btn-primary btn-block" type="submit">Sign up</button>
+        </form>
+        <p class="center muted mt" style="font-size:14px">Already have an account? <a href="/login.html">Log in</a></p>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="/js/common.js"></script>
+  <script>
+    $('#regForm').on('submit', function (e) {
+      e.preventDefault();
+      $('#alert').empty();
+      Shop.api('POST', '/api/auth/register', {
+        name: $('#name').val(), email: $('#email').val(), password: $('#password').val(),
+      }).done(function (res) {
+        Shop.setToken(res.token); Shop.setUser(res.user);
+        window.location.href = '/';
+      }).fail(function (xhr) {
+        $('#alert').html('<div class="alert alert-error">' + Shop.errMsg(xhr) + '</div>');
+      });
+    });
+  </script>
+</body>
+</html>
