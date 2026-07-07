@@ -4,6 +4,11 @@ A full-stack e-commerce platform built with **Node.js, Express, MySQL, and Socke
 
 > Independent Project · Arlington, Texas
 
+**🔗 Live demo:** https://ecommerce-platform-production-8f71.up.railway.app
+**💻 Source:** https://github.com/Roshan0003goud/novashop-ecommerce
+
+Try it with the demo customer account **`customer@shop.dev` / `Password123!`** (or the admin **`admin@shop.dev` / `Admin123!`** to see the live support inbox). The app **auto-creates and seeds its database on first boot**, so it runs with zero manual setup in the cloud.
+
 ---
 
 ## Features
